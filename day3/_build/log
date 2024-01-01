@@ -1,0 +1,6 @@
+# dune init proj day3
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Shared cache location: /home/exo/.cache/dune/db
+# Workspace root: /home/exo/git/adventofcode/day3
+# Auto-detected concurrency: 4
