@@ -14,7 +14,7 @@ let read_file filename =
     prerr_endline ("Error: " ^ msg);
     None
 
-let input = match read_file "test.txt" with Some x -> x | _ -> exit 1
+let input = match read_file "input.txt" with Some x -> x | _ -> exit 1
 
 type symbol = { x : int; y : int; symbol : char }
 type part_number = { start_x : int; end_x : int; y : int; value : int }
@@ -156,6 +156,15 @@ let symbols, part_numbers =
 let sum = process_part_number_data symbols part_numbers 0
 let () = print_endline ("Part one results " ^ string_of_int sum)
 
+let unique list =
+  let rec aux list acc =
+    match list with
+    | [] -> acc
+    | x :: rest ->
+        if List.mem x acc then aux rest acc else aux rest (acc @ [ x ])
+  in
+  aux list []
+
 let gear_ratio_parts symbol part_numbers =
   let indexes =
     [ (-1, -1); (0, -1); (1, -1); (-1, 0); (1, 0); (-1, 1); (0, 1); (1, 1) ]
@@ -182,7 +191,7 @@ let gear_ratio_parts symbol part_numbers =
   (*   actual_part_numbers *)
   (*   |> List.iter (fun p -> print_endline (string_of_int p.value)) *)
   (* in *)
-  actual_part_numbers
+  unique actual_part_numbers
 
 let rec process_gear_ratio_data symbols part_numbers sum =
   (* let () = *)
@@ -198,17 +207,22 @@ let rec process_gear_ratio_data symbols part_numbers sum =
       match gear_ratio_symbol with
       | { x = _; y = _; symbol } when symbol = '*' ->
           let gear_parts = gear_ratio_parts gear_ratio_symbol part_numbers in
-          let () =
-            print_endline
-              ("Gear parts has " ^ string_of_int (List.length gear_parts))
-          in
+          (* let () = *)
+          (*   print_endline *)
+          (*     ("Gear parts has " ^ string_of_int (List.length gear_parts)) *)
+          (* in *)
           let gear_ratio =
             gear_parts
             |> List.fold_left
                  (fun prev part_number -> prev * part_number.value)
                  1
           in
-          let new_sum = if gear_ratio != 1 then sum + gear_ratio else sum in
+          (* let () = *)
+          (*   print_endline ("Gear ratio is " ^ string_of_int gear_ratio) *)
+          (* in *)
+          let new_sum =
+            if List.length gear_parts = 2 then sum + gear_ratio else sum
+          in
           process_gear_ratio_data rest_of_symbols part_numbers new_sum
       | _ -> process_gear_ratio_data rest_of_symbols part_numbers sum)
   | [] -> sum
